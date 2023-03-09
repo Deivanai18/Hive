@@ -1,0 +1,138 @@
+[training@localhost ~]$ hive
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+Hive history file=/tmp/training/hive_job_log_training_202302140645_1020834613.txt
+hive> CREATE TABLE UserRating
+    > (userId INT, movieId INT, ratings INT, unixtime BIGINT) ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY '\t'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 4.333 seconds
+hive> LOAD DATA INPATH 'HiveWork/u.data' INTO TABLE UserRating;
+Loading data to table default.userrating
+OK
+Time taken: 0.526 seconds
+hive> select * from UserRating limit 5;
+OK
+196	242	3	881250949
+186	302	3	891717742
+22	377	1	878887116
+244	51	2	880606923
+166	346	1	886397596
+Time taken: 0.48 seconds
+hive> CREATE TABLE UserDemo
+    > (userId INT, age INT, gender STRING, occupation STRING, zip_code BIGINT) ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY '\t'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.154 seconds
+hive> LOAD DATA INPATH 'HiveWork1/u.user' INTO TABLE UserDemo;
+Loading data to table default.userdemo
+OK
+Time taken: 0.203 seconds
+hive> select * from UserDemo limit 10;
+OK
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+NULL	NULL	NULL	NULL	NULL
+Time taken: 0.138 seconds
+hive> DROP TABLE IF EXISTS UserDemo;
+OK
+Time taken: 0.592 seconds
+hive> CREATE TABLE UserDemo
+    > (userId INT, age INT, gender STRING, occupation STRING, zip_code BIGINT) ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY '|'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.104 seconds
+hive> LOAD DATA INPATH 'HiveWork1/u.user' INTO TABLE UserDemo;
+FAILED: SemanticException Line 1:17 Invalid path ''HiveWork1/u.user'': No files matching path hdfs://0.0.0.0:8020/user/training/HiveWork1/u.user
+hive> LOAD DATA INPATH 'HiveWork1/u.user' INTO TABLE UserDemo;
+Loading data to table default.userdemo
+OK
+Time taken: 0.197 seconds
+hive> select * from UserDemo limit 5;
+OK
+1	24	M	technician	85711
+2	53	F	other	94043
+3	23	M	writer	32067
+4	24	M	technician	43537
+5	33	F	other	15213
+Time taken: 0.162 seconds
+hive> load data local inpath '/home/training/HiveWorkSpace/ml-data/u.user' into table UserDemo;
+Copying data from file:/home/training/HiveWorkSpace/ml-data/u.user
+Copying file: file:/home/training/HiveWorkSpace/ml-data/u.user
+Loading data to table default.userdemo
+OK
+Time taken: 0.325 seconds
+hive> load data local inpath '/home/training/HiveWorkSpace/ml-data/u.user' into                                                                                 select * from UserDemo limit 10;
+OK
+1	24	M	technician	85711
+2	53	F	other	94043
+3	23	M	writer	32067
+4	24	M	technician	43537
+5	33	F	other	15213
+6	42	M	executive	98101
+7	57	M	administrator	91344
+8	36	M	administrator	5201
+9	29	M	student	1002
+10	53	M	lawyer	90703
+Time taken: 0.242 seconds
+hive> select * from UserRating join UserDemo on UserRating.userId = UserDemo.userId limit 10;
+FAILED: SemanticException [Error 10002]: Line 1:71 Invalid column reference 'rId'
+hive> select * from UserRating join UserDemo on UserRating.userId = UserDemo.rId          
+    > 
+    > [training@localhost ~]$ hive
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+Hive history file=/tmp/training/hive_job_log_training_202302140812_1414045816.txt
+hive> select * from UserRating join UserDemo on UserRating.userId = UserDemo.userId limit 10;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapred.reduce.tasks=<number>
+Starting Job = job_202302140609_0001, Tracking URL = http://0.0.0.0:50030/jobdetails.jsp?jobid=job_202302140609_0001
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -Dmapred.job.tracker=0.0.0.0:8021 -kill job_202302140609_0001
+Hadoop job information for Stage-1: number of mappers: 2; number of reducers: 1
+2023-02-14 08:13:23,793 Stage-1 map = 0%,  reduce = 0%
+2023-02-14 08:13:31,957 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.03 sec
+2023-02-14 08:13:32,975 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.03 sec
+2023-02-14 08:13:33,988 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.03 sec
+2023-02-14 08:13:35,011 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.03 sec
+2023-02-14 08:13:36,027 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.03 sec
+2023-02-14 08:13:37,046 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.03 sec
+2023-02-14 08:13:38,083 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 10.63 sec
+2023-02-14 08:13:39,105 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 10.63 sec
+2023-02-14 08:13:40,116 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 10.63 sec
+2023-02-14 08:13:41,144 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 10.63 sec
+MapReduce Total cumulative CPU time: 10 seconds 630 msec
+Ended Job = job_202302140609_0001
+MapReduce Jobs Launched: 
+Job 0: Map: 2  Reduce: 1   Cumulative CPU: 10.63 sec   HDFS Read: 0 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 10 seconds 630 msec
+OK
+1	270	5	888732827	1	24	M	technician	85711
+1	270	5	888732827	1	24	M	technician	85711
+1	133	4	876892818	1	24	M	technician	85711
+1	133	4	876892818	1	24	M	technician	85711
+1	29	1	878542869	1	24	M	technician	85711
+1	29	1	878542869	1	24	M	technician	85711
+1	179	3	875072370	1	24	M	technician	85711
+1	179	3	875072370	1	24	M	technician	85711
+1	237	2	875071749	1	24	M	technician	85711
+1	237	2	875071749	1	24	M	technician	85711
+Time taken: 29.709 seconds
+hive> [training@localhost ~]$ hive
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+Hive history file=/tmp/training/hive_job_log_training_202302140823_417229946.txt
+hive> 

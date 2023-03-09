@@ -1,0 +1,124 @@
+[training@localhost ~]$ hive
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+Hive history file=/tmp/training/hive_job_log_training_202302150608_869046111.txt
+hive> create table Movies_Part(movieId int, MovieName string, release_date string, imdb_url string) partitioned by (genre string) row format delimited fields terminated by ',';
+OK
+Time taken: 4.058 seconds
+hive> describe Movies_Part;
+OK
+movieid	int	
+moviename	string	
+release_date	string	
+imdb_url	string	
+genre	string	
+Time taken: 0.2 seconds
+hive> load data local inpath 'HiveWorkSpace/action.txt' into table Movies_Part partitione(genre='action');
+FAILED: ParseException line 1:73 mismatched input 'partitione' expecting EOF near 'Movies_Part'
+
+hive> load data local inpath 'HiveWorkSpace/action.txt' into table Movies_Part partition(genre='action'); 
+Copying data from file:/home/training/HiveWorkSpace/action.txt
+Copying file: file:/home/training/HiveWorkSpace/action.txt
+Loading data to table default.movies_part partition (genre=action)
+OK
+Time taken: 0.955 seconds
+hive> load data local inpath 'HiveWorkSpace/comedy.txt' into table Movies_Part partition(genre='comedy');
+Copying data from file:/home/training/HiveWorkSpace/comedy.txt
+Copying file: file:/home/training/HiveWorkSpace/comedy.txt
+Loading data to table default.movies_part partition (genre=comedy)
+OK
+Time taken: 0.87 seconds
+hive> load data local inpath 'HiveWorkSpace/thriller.txt' into table Movies_Part partition(genre='thriller');
+Copying data from file:/home/training/HiveWorkSpace/thriller.txt
+Copying file: file:/home/training/HiveWorkSpace/thriller.txt
+Loading data to table default.movies_part partition (genre=thriller)
+OK
+Time taken: 0.417 seconds
+hive> desribe Movies_Part;
+FAILED: ParseException line 1:0 cannot recognize input near 'desribe' 'Movies_Part' '<EOF>'
+
+hive> describe Movies_Part;
+OK
+movieid	int	
+moviename	string	
+release_date	string	
+imdb_url	string	
+genre	string	
+Time taken: 0.127 seconds
+hive> select * from Movies_part where genre = 'comedy' limit 10;
+OK
+1	Toy Story (1995)	01-Jan-1995	http://us.imdb.com/M/title-exact?Toy%20Story%20(1995)	comedy
+4	Get Shorty (1995)	01-Jan-1995	http://us.imdb.com/M/title-exact?Get%20Shorty%20(1995)	comedy
+8	Babe (1995)	01-Jan-1995	http://us.imdb.com/M/title-exact?Babe%20(1995)	comedy
+13	Mighty Aphrodite (1995)	30-Oct-1995	http://us.imdb.com/M/title-exact?Mighty%20Aphrodite%20(1995)	comedy
+16	French Twist (Gazon maudit) (1995)	01-Jan-1995	http://us.imdb.com/M/title-exact?Gazon%20maudit%20(1995)	comedy
+17	From Dusk Till Dawn (1996)	05-Feb-1996	http://us.imdb.com/M/title-exact?From%20Dusk%20Till%20Dawn%20(1996)	comedy
+21	Muppet Treasure Island (1996)	16-Feb-1996	http://us.imdb.com/M/title-exact?Muppet%20Treasure%20Island%20(1996)comedy
+25	Birdcage\	 The (1996)	08-Mar-1996	comedy
+26	Brothers McMullen\	 The (1995)	01-Jan-1995	comedy
+29	Batman Forever (1995)	01-Jan-1995	http://us.imdb.com/M/title-exact?Batman%20Forever%20(1995)	comedy
+Time taken: 0.397 seconds
+hive> select * from UserRating where ratings >= 3  limit 10;    
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_202302150550_0001, Tracking URL = http://0.0.0.0:50030/jobdetails.jsp?jobid=job_202302150550_0001
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -Dmapred.job.tracker=0.0.0.0:8021 -kill job_202302150550_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-02-15 06:26:23,384 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 06:26:27,464 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.09 sec
+2023-02-15 06:26:28,478 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.09 sec
+2023-02-15 06:26:29,490 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.09 sec
+2023-02-15 06:26:30,519 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.09 sec
+2023-02-15 06:26:31,557 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 1.09 sec
+MapReduce Total cumulative CPU time: 1 seconds 90 msec
+Ended Job = job_202302150550_0001
+MapReduce Jobs Launched: 
+Job 0: Map: 1   Cumulative CPU: 1.09 sec   HDFS Read: 0 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 90 msec
+OK
+196	242	3	881250949
+186	302	3	891717742
+298	474	4	884182806
+253	465	5	891628467
+305	451	3	886324817
+6	86	3	883603013
+286	1014	5	879781125
+200	222	5	876042340
+210	40	3	891035994
+224	29	3	888104457
+Time taken: 17.239 seconds
+hive> show tables;
+OK
+movies_part
+userdemo
+userrating
+Time taken: 0.113 seconds
+hive> create database Movie_UserId;
+OK
+Time taken: 0.106 seconds
+hive> use Movies_UserId;
+FAILED: Error in metadata: ERROR: The database Movies_UserId does not exist.
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask
+hive> show databases;
+OK
+default
+movie_userid
+Time taken: 0.1 seconds
+hive> use Movie_UserId; 
+OK
+Time taken: 0.021 seconds
+hive> create table UserId as select * from UserRating,UserDemo where UserRating.userId = UserDemo.userId;
+FAILED: ParseException line 1:47 mismatched input ',' expecting EOF near 'UserRating'
+
+hive> create table UserId as select * from UserRating join UserDemo on UserRating.userId = UserDemo.userId;    
+FAILED: SemanticException [Error 10001]: Line 1:37 Table not found 'UserRating'
+hive> select * from UserRating limit 10;
+FAILED: SemanticException [Error 10001]: Line 1:14 Table not found 'UserRating'
+hive> show tables
+    > ;
+OK
+Time taken: 0.071 seconds
+hive> show tables;
+OK
+Time taken: 0.099 seconds
+hive> 
